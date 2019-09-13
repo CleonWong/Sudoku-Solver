@@ -1,13 +1,13 @@
 # Sudoku-Solver
 
-In this exercise, I attempt to tackle the problem of solving every sudoku puzzle. This is a personal project that serves as an opportunity to hone my problem-solving skills, refine my logical thinking frameworks and test my understanding of the Python language - all while having fun.
+In this exercise, I attempt to tackle the problem of solving every sudoku puzzle. This is a personal project that serves as an opportunity to hone my problem-solving skills, refine my logical thinking frameworks and test my understanding of the Python language - all while having a little fun.
 
 ## About Sudoku
 **Sudoku** is one of the most popular logic-based number-placement puzzle. The objective is to fill a square grid of size 'n' with digits 1 through 'n'. The digits must be placed such that each row, each column and each of the nine 3x3 subgrids contain only one instance of each digit.
 
 The most common Sudoku puzzles uses a 9x9 grid, which is what is used in this exercise.
 
-For more information about Sudoku, check out its Wikipedia page [here](https://en.wikipedia.org/wiki/Sudoku).
+*For more information about Sudoku, check out its Wikipedia page [here](https://en.wikipedia.org/wiki/Sudoku).*
 
 ## Third-party libraries
 - [Pandas](https://pandas.pydata.org/) (for reading the .csv file of quizzes)
@@ -19,9 +19,27 @@ For more information about Sudoku, check out its Wikipedia page [here](https://e
 ## Approach
 
 ###### Notation
-- Each puzzle is a 9x9 *grid* with 81 *cells*.
-- Some cells are already populated with *digits*; these digits are referred to as *givens*.
-- A *row* is well, a row. A *column* is a column. A *subgrid* is a 3x3 grid that lies within the 9x9 grid; rows, columns and subgrids are referred to as *units*.
+- Each puzzle is a 9x9 **_grid_** with 81 **_cells_**.
+- Some cells are pre-populated with **_digits_**; these digits are referred to as **_givens_**.
+- A **_row_** is well, a row.
+- A **_column_** is a column.
+- A **_subgrid_** is a 3x3 grid that lies within the 9x9 grid (there are 9 specific subgrids in  a 9x9 grid)
+- Rows, columns and subgrids are referred to as **_units_**.
 
+###### Preparing the grid
+A Sudoku *grid* is often presented as an 81-digit string.
+
+For example:
+``004300209005009001070060043006002087190007400050083000600000105003508690042910300``
+
+In this format, the digit ``0`` denotes an empty *cell*.
+
+The function ``parse_grid()`` is used to parse each grid string into a single list of 9 lists, where each list contains 9 *digits* (either `0`s or *givens*).
+
+``def parse_grid(grid):
+    board = []
+    for i in range(0, 81, 9):
+        board.append(grid[i:i+9])
+    return board``
 
 ## Acknowledgements
