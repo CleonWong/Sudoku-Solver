@@ -18,7 +18,7 @@ The most common Sudoku puzzles uses a 9x9 grid, which is what is used in this ex
 
 ## Approach
 
-###### Notation
+#### Notation
 - Each puzzle is a 9x9 **_grid_** with 81 **_cells_**.
 - Some cells are pre-populated with **_digits_**; these digits are referred to as **_givens_**.
 - A **_row_** is well, a row.
@@ -26,20 +26,19 @@ The most common Sudoku puzzles uses a 9x9 grid, which is what is used in this ex
 - A **_subgrid_** is a 3x3 grid that lies within the 9x9 grid (there are 9 specific subgrids in  a 9x9 grid)
 - Rows, columns and subgrids are referred to as **_units_**.
 
-###### Preparing the grid
-A Sudoku *grid* is often presented as an 81-digit string.
+#### Preparing the grid
+A Sudoku grid is often presented as an 81-digit string. In this format, the digit ``0`` denotes an empty cell. For the sake of clarity, each string is called a **_grid-string_**. For example:
 
-For example:
 ``004300209005009001070060043006002087190007400050083000600000105003508690042910300``
 
-In this format, the digit ``0`` denotes an empty *cell*.
+The function ``parse_gridstring()`` is used to parse each grid-string into a single list (the grid) of 9 lists (each row), where each list contains 9 digits (either `0`s or givens).
 
-The function ``parse_grid()`` is used to parse each grid string into a single list of 9 lists, where each list contains 9 *digits* (either `0`s or *givens*).
+```python
+def parse_gridstring(gridstring):
+    grid = []
+    board.append(gridstring[i:i+9] for i in range(0, 81, 9))
+    return board
+```
 
-``def parse_grid(grid):
-    board = []
-    for i in range(0, 81, 9):
-        board.append(grid[i:i+9])
-    return board``
 
 ## Acknowledgements
