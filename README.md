@@ -116,21 +116,38 @@ def get_poss_digits(i, j):
 ```
 What happens here is that calling each of the 3 functions ``check_unit_row``, ``check_unit_col`` and ``check_unit_subgrid`` on an empty cell returns a set of possible digits when looking through its row, column or subgrid respectively. The function ``get_poss_digits`` then finds the intersection of the 3 sets (``possible_row``, ``possible_col`` and ``possible_subgrid``) and returns a final set (``possible_digits``) that contains the possible digits for that empty cell.
 
-Using cell ``(0, 0)`` from the example grid above, we see that the only possible digit for that cell is 8:
+Using the top left cell ``grid[0][0]`` from the example grid above, we see that the only possible digit for that cell is 8:
 
 ```python
-check_unit_row(0, 0) >>> {1, 5, 6, 7, 8}
-check_unit_col(0, 0) >>> {2, 3, 4, 5, 7, 8, 9}
-check_unit_subgrid(0, 0) >>> {1, 2, 3, 6, 8, 9}
-get_poss_digits(0,0) >>> {8}
+check_unit_row(0,0)
+  >>> {1, 5, 6, 7, 8}
+check_unit_col(0,0)
+  >>> {2, 3, 4, 5, 7, 8, 9}
+check_unit_subgrid(0,0)
+  >>> {1, 2, 3, 6, 8, 9}
+
+get_poss_digits(0,0)
+  >>> {8}
 ```
 
 
 ### Step 2: Lone single and constraint propagation
 
+A **_Lone Single_** happens when an empty cell has only one possible digit. When a Lone Single happens, all we have to do is to fill that cell with its single possible value. However, most of the time, it doesn't stop there. In most cases, filling a cell will eliminate the possible digits for other empty cells, making it possible to fill a second cell. This then shrinks the set of possible digits for the rest of the empty cells, and so on. This process is called **_constraint propagation_**.
 
+This is how it looks like in code:
 
-Because Sudoku is a [constraint satisfaction](https://en.wikipedia.org/wiki/Constraint_satisfaction_problem) problem,
+```python
+def lone_single(grid):
+    for i in range(9):
+        for j in range(9):
+            if grid[i][j] == 0:
+                possible_digits = get_poss_digits(i, j)
+                if len(possible_digits) == 1:
+                    grid[i][j] = list(possible_digits)[0]
+                    lone_single(grid)
+    return grid
+```
 
 
 
