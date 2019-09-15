@@ -1,7 +1,7 @@
 # Sudoku Solver
 
 In this exercise, I attempt to tackle the problem of solving every sudoku puzzle. This is a personal project that serves as an opportunity to hone my problem-solving skills, refine my logical thinking frameworks and test my understanding of the Python language - all while having a little fun.
-\n
+
 
 ## About Sudoku
 **Sudoku** is one of the most popular logic-based number-placement puzzle. The objective is to fill a square grid of size 'n' with digits 1 through 'n'. The digits must be placed such that each row, each column and each of the nine 3x3 subgrids contain only one instance of each digit.
@@ -15,7 +15,7 @@ The most common Sudoku puzzles uses a 9x9 grid, which is what is used in this ex
 
 ## Dataset
 - 1M games from a Kaggle dataset (``sudoku.csv``) that can be found [here](https://www.kaggle.com/bryanpark/sudoku#sudoku.csv).
-\n
+
 
 ## Approach
 
@@ -26,14 +26,14 @@ The most common Sudoku puzzles uses a 9x9 grid, which is what is used in this ex
 - A **_column_** is a column.
 - A **_subgrid_** is a 3x3 grid that lies within the 9x9 grid (there are 9 specific subgrids in  a 9x9 grid)
 - Rows, columns and subgrids are referred to as **_units_**.
-\n
+
 
 ### Importing frameworks
 ```python
 import pandas as pd
 import time
 ```
-\n
+
 
 ### Preparing the grids to solve
 A Sudoku grid is often presented as an 81-digit string. In this format, the digit ``0`` denotes an empty cell. For the sake of clarity, every string representing a grid is called a **_grid-string_**. For example:
@@ -75,7 +75,6 @@ for row in df_grids.itertuples():
     grid = parse_gridstring(gridstring)
     grid_all.append(grid)
 ```
-\n
 
 ### Step 1: Finding the possible digits for every empty cell
 
@@ -119,21 +118,6 @@ def get_poss_digits(i, j):
 ```
 What happens here is that calling each of the 3 functions ``check_unit_row``, ``check_unit_col`` and ``check_unit_subgrid`` on an empty cell returns a set of possible digits when looking through its row, column or subgrid respectively. The function ``get_poss_digits`` then finds the intersection of the 3 sets (``possible_row``, ``possible_col`` and ``possible_subgrid``) and returns a final set (``possible_digits``) that contains the possible digits for that empty cell.
 
-Using the cell ``grid[4][4]`` (i.e. row 5, column 5) from the example grid above, we see that the only possible digit for that cell is 8:
-
-```python
-check_unit_row(4,4)
-  >>> {1, 2, 3, 6, 9}
-check_unit_col(4,4)
-  >>> {1, 3, 4, 5, 8}
-check_unit_subgrid(4,4)
-  >>> {1, 2, 4, 6, 7, 8, 9}
-
-get_poss_digits(4,4)
-  >>> {1}
-```
-\n
-
 ### Step 2: Lone singles and constraint propagation
 
 A **_Lone Single_** happens when an empty cell has only one possible digit. When a Lone Single happens, all we have to do is to fill that cell with its single possible value. However, most of the time, it doesn't stop there. In most cases, filling a cell will eliminate the possible digits for other empty cells, making it possible to fill a second cell. This then shrinks the set of possible digits for the rest of the empty cells, and so on. This process is called **_constraint propagation_**.
@@ -149,7 +133,6 @@ def lone_single(grid):
 
     return grid
 ```
-\n
 
 ### Step 3: Hidden singles
 
@@ -221,8 +204,22 @@ Let me try to explain what is happening here.
 
 As mentioned earlier, an empty cell belongs to 3 units (its row, column and subgrid). For each empty cell, we would have to check for its possible digits, and then the possible digits for all other empty cells in the 3 units it belongs to. The variable ``unique_diff`` is the result of comparing the set of possible digits for a particular empty cell with the set of possible digits for all other empty cells in a unit. Then, if the length of ``unique_diff`` is 1, it indicates that a hidden single is present, and we can go ahead and populate this empty cell with that unique possible digit.
 
-\n
 ### Step 4: Search
+
+The above Single Lone and Hidden Lone are basic Sudoku solving techniques. They can be used to solve most easy and medium-rated puzzles, but not all hard-rated ones. Difficult puzzles are impossible to be solved solely by the Single Lone and Hidden Lone methods when, after iterating through all empty cells and applying the two methods, none of the empty cells have a definite possible digit - i.e. this means that you'd need to think far ahead of the next digit you pen down and some guessing needs to be involved to solve the puzzle.
+
+This is where we take advantage of the computer and the search algorithm to do the guess-work / trial-and-error for us.
+
+The search algorithm works like this:
+1. Start with an empty cell, find its set of possible digits and populate the cell with any one of its possible digits.
+2. Move on to the next empty cell, search its set of possible digits based on the population in the previous empty cell, and populate this second empty cell with any one digits in its own set of possible digits.
+3. Keep iterating and searching through all the empty cells until either:
+    - The puzzle is solved, or
+    - You hit an empty cell with an empty set of possible digits
+      - If this happens, it means that one of the previous cells has been populated with the wrong digit. Backtrack one cell and consider another of its possibilities under its set of possible digits and continue the search.
+
+This is known as [depth-first](https://en.wikipedia.org/wiki/Depth-first_search) search, where we search as far as possible for a solution under one of the possible digit of a starting cell before [backtracking](https://en.wikipedia.org/wiki/Backtracking).
+
 
 
 ## Acknowledgements
